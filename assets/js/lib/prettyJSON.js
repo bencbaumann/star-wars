@@ -1,0 +1,1 @@
+module.exports = json => `<pre>${JSON.stringify(json, null, 2)}</pre>`;

@@ -1,15 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Star Wars Game</title>
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="/assets/js/styles.css">
 </head>
+
 <body>
-    <div id="charectors"></div>
-    <div id="player"></div>
-    <div id="defender"></div>
+    <div id="game">
+        <div id="message"></div>
+        <div id="debug" class="clearfix"></div>
+        <div id="charecters">
+        </div>
+        <div id="player" class="clearfix"></div>
+        <div id="controls" class="clearfix">
+            <a class="button" href="#" id="attack">Attack</a>
+            <a class="button" href="#" id="restart">Restart</a>
+        </div>
+        <div id="defender" class="clearfix"></div>
+    </div>
+    <script src="assets/js/bundle.js"></script>
 </body>
+
 </html>

@@ -1,0 +1,93 @@
+#message,
+#debug {
+  background: #000;
+  color: #fff;
+  padding: 20px;
+  border: inset solid black 2px;
+}
+#debug {
+  position: fixed;
+  bottom: 0px;
+  right: 0px;
+}
+.clearfix {
+  clear: both;
+}
+body {
+  padding: 0px;
+  margin: 0px;
+  background: url("../images/bg.gif");
+}
+#player {
+  padding: 20px;
+  height: 240px;
+  /* background: yellow; */
+  border: solid 1px yellow;
+}
+#defender {
+  padding: 20px;
+  height: 240px;
+  /* background: greenyellow; */
+  border: solid 1px greenyellow;
+}
+#controls {
+  padding: 20px;
+  /* background: "#BADASS"; */
+  border: solid 1px "#BADASS";
+}
+#charecters {
+  padding: 20px;
+  height: 240px;
+  /* background: red; */
+  border: solid 1px red;
+}
+.charecter {
+  padding: 20px;
+  background: orange;
+  width: 200px;
+  height: 200px;
+  margin-right: 20px;
+  float: left;
+}
+.charecter:hover::before{
+    content: " Health: " attr(data-health-points)"\A Attack: " attr(data-attack-power);
+    white-space: pre;
+    padding: 5px;
+    background: black;
+    color: white;
+    display: block;
+}
+.charecter:nth-child(last) {
+  margin-right: 0px;
+}
+#obi {
+  background: url("../images/obi.jpg");
+  background-repeat: no-repeat;
+  background-size: 100%;
+}
+#luke {
+  background: url("../images/luke.jpg");
+  background-repeat: no-repeat;
+  background-size: 100%;
+}
+#sidious {
+  background: url("../images/sidious.jpg");
+  background-repeat: no-repeat;
+  background-size: 100%;
+}
+#maul {
+  background: url("../images/maul.jpg");
+  background-repeat: no-repeat;
+  background-size: 100%;
+}
+
+
+
+/* For buttons */
+.button {  
+    background: black;
+    color:white;
+    display:inline;
+    padding: 20px;
+    border: solid 2px yellow;
+}
