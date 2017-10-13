@@ -22,24 +22,24 @@ body {
   padding: 20px;
   height: 240px;
   /* background: yellow; */
-  border: solid 1px yellow;
+  /* border: solid 1px yellow; */
 }
 #defender {
   padding: 20px;
   height: 240px;
   /* background: greenyellow; */
-  border: solid 1px greenyellow;
+  /* border: solid 1px greenyellow; */
 }
 #controls {
   padding: 20px;
   /* background: "#BADASS"; */
-  border: solid 1px "#BADASS";
+  /* border: solid 1px "#BADASS"; */
 }
 #charecters {
   padding: 20px;
   height: 240px;
   /* background: red; */
-  border: solid 1px red;
+  /* border: solid 1px red; */
 }
 .charecter {
   padding: 20px;
@@ -50,7 +50,7 @@ body {
   float: left;
 }
 .charecter:hover::before{
-    content: " Health: " attr(data-health-points)"\A   Attack: " attr(data-attack-power);
+    content: "\3   Health: " attr(data-health-points)"\A   Attack: " attr(data-attack-power)"\A   Counter Attack: " attr(data-counter-attack);
     white-space: pre;
     padding: 5px;
     background: black;

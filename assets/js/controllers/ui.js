@@ -1,7 +1,7 @@
 const game = require("./game.js");
 const prettyJSON = require("../lib/prettyJSON.js");
 module.exports = {
-  introDiv: $("#introDiv"),
+  introDiv: $("#intro"),
   gameDiv: $("#game"),
   debugDiv: $("#debug"),
   messageDiv: $("#message"),
@@ -17,13 +17,17 @@ module.exports = {
   sidiousDiv: $("#sidious"),
   maulDiv: $("#maul"),
   attackBtn: $("#attack"),
+  intro: false,
   snd:{
     theme: new Audio("./assets/sounds/swtheme.mp3"),
     saber: new Audio("./assets/sounds/saber.mp3"),    
     luke: new Audio("./assets/sounds/luke.mp3"),
     obi: new Audio("./assets/sounds/obi.mp3"),
     sidious: new Audio("./assets/sounds/sidious.mp3"),
-    maul: new Audio("./assets/sounds/maul.mp3")    
+    maul: new Audio("./assets/sounds/maul.mp3"),
+    stop: function(snd){
+      snd.pause();
+    }    
 
   },
   ctrl:{
@@ -50,10 +54,10 @@ module.exports = {
   },
   show: function(el){
     // $(el).attr('style', 'display: visible;')
-    $(el).slideDown();
+    $(el).show();
   },
   hide: function(el){
-    $(el).slideUp();
+    $(el).hide();
   },
   msg: function(msg) {
     this.messageDiv.html(msg);
@@ -64,17 +68,17 @@ module.exports = {
   removeDefender: function() {
     $('#defender .charecter').detach();
   },
-  playSwTheme: function() {
-    // this.snd.theme.load();
-    // this.snd.theme.play();
-  },
+
   play: function(sound){
       this.dbg(sound);
       sound.load();
       sound.play();
   },
   start: function(){
-      this.play(this.snd.theme);
+      game.init();
+      if(!this.intro){
+        this.play(this.snd.theme)
+      };
       this.charectersDiv.empty();
       this.playerDiv.empty();
       this.defenderDiv.empty();
@@ -92,12 +96,13 @@ module.exports = {
         el.addClass('charecter');
         el.attr('data-health-points', charecter.healthPoints);
         el.attr('data-attack-power', charecter.attackPower);
+        el.attr('data-counter-attack', charecter.counterAttackPower);
         this.charectersDiv.append(el);
       });
     
     this.charectersDivs= $(".charecter"),
     this.msg("Please Select a Charector");
-    this.dbg(prettyJSON(game));
+    if(game.debug){this.dbg(prettyJSON(game))};
     this.updateDebugDiv();
     this.hide(this.controlsDiv);
     this.hide(this.ctrl.restart);

@@ -69,8 +69,10 @@
 
 var charecters = __webpack_require__(3);
 module.exports = {
+  debug: false,
   playerSelected: false,
   defenderSelected: false,
+  defenders: 3,
   charecters: charecters,
   player: {},
   defender: {},
@@ -104,6 +106,7 @@ module.exports = {
       charecters.init();     
       this.player = {};
       this.defender = {};
+      this.defenders=3;
       this.playerSelected = false;
       this.defenderSelected = false;
   }
@@ -128,30 +131,31 @@ $(document).ready(function() {
 
     $(document).on('keyup', closeIntro);
     function closeIntro() {
-        console.log('keyup baby');
-        ui.gameDiv.show();
-        ui.introDiv.hide();
-        ui.snd.theme.stop();
-
+        console.log(ui.introDiv);  
+        console.log(ui.gameDiv);  
+        ui.hide(ui.introDiv);
+        ui.show(ui.gameDiv);      
+        ui.snd.stop(ui.snd.theme);
+        ui.intro = true;
     }
     
     
 
     const selectPlayers = function () {
-        ui.dbg(game);
+        if(game.debug){ui.dbg(game)};
         if (!game.playerSelected) {
           ui.selectPlayer($(this));
           let playerId = $(this).attr("id");
           game.selectPlayer(playerId);
           ui.msg("Please Select a Defender");
-          ui.dbg(game);
+          if(game.debug){ui.dbg(game)};
           $(this).off("click");
         } else if (!game.defenderSelected) {
           ui.selectDefender($(this));
           let defenderId = $(this).attr("id");
           game.selectDefender(defenderId);
           ui.msg("Fight!");
-          ui.dbg(game);
+          if(game.debug){ui.dbg(game)};
           ui.show(ui.controlsDiv);
           ui.hide(ui.charectersDiv);
         }
@@ -163,24 +167,32 @@ ui.charectersDivs.on("click", selectPlayers);
   ui.ctrl.attack.on("click", function() {
     ui.play(ui.snd.saber);
     game.fight();
-    ui.dbg(game);
+    if(game.debug){ui.dbg(game)};
     ui.player = $('#player div');
     ui.defender = $('#defender div');
     ui.player.attr('data-health-points', game.player.healthPoints);
     ui.player.attr('data-attack-power', game.player.attackPower);
     ui.defender.attr('data-health-points', game.defender.healthPoints);
     ui.defender.attr('data-attack-power', game.defender.attackPower);
-    if (game.isDefenderDead()) {
-    //   game.player.force += 10;
-      ui.removeDefender();
-      ui.msg("You won, select a new defender!");
-      ui.hide(ui.controlsDiv);
-      ui.show(ui.charectersDiv);
-    } else if (game.isPlayerDead()) {
+    if (game.isPlayerDead()) {
       ui.msg("You are dead!");
       ui.ctrl.restart.show();
       ui.ctrl.attack.hide();
     }
+    else if (game.isDefenderDead()) {
+      game.defenders--;
+      game.player.force += 10;
+      ui.removeDefender();
+      ui.msg("You won, select a new defender!");
+      ui.hide(ui.controlsDiv);
+      ui.show(ui.charectersDiv);
+      if(game.defenders===0){
+        ui.msg("You've killed em all");
+        ui.show(ui.controlsDiv);
+        ui.ctrl.restart.show();
+        ui.ctrl.attack.hide();
+      }
+    } 
   });
 
   ui.ctrl.restart.on("click", function() {
@@ -205,66 +217,66 @@ ui.charectersDivs.on("click", selectPlayers);
 /***/ (function(module, exports) {
 
 var charecters = {
-  obi: {
-    id: "obi",
-    name: "Obi-Wan Kanobi",
-    healthPoints: 120,
-    attackPower: 6,
-    baseAttackPower: 6,
-    force: 0,
-    counterAttackPower: 12
-  },
   luke: {
     id: "luke",
     name: "Luke Skywalker",
-    healthPoints: 100,
-    attackPower: 4,
-    baseAttackPower: 4,
+    healthPoints: 0,
+    attackPower: 0,
+    baseAttackPower: 0,
     force: 0,
-    counterAttackPower: 10
+    counterAttackPower: 0
+  },
+  obi: {
+    id: "obi",
+    name: "Obi-Wan Kanobi",
+    healthPoints: 0,
+    attackPower: 0,
+    baseAttackPower: 0,
+    force: 0,
+    counterAttackPower: 0
   },
   sidious: {
     id: "sidious",
     name: "Darth Sidious",
-    healthPoints: 150,
-    attackPower: 8,
-    baseAttackPower: 8,
+    healthPoints: 0,
+    attackPower: 0,
+    baseAttackPower: 0,
     force: 0,
-    counterAttackPower: 8
+    counterAttackPower: 0
   },
   maul: {
     id: "maul",
     name: "Darth Maul",
-    healthPoints: 180,
-    attackPower: 1,
-    baseAttackPower: 1,
+    healthPoints: 0,
+    attackPower: 0,
+    baseAttackPower: 0,
     force: 0,
-    counterAttackPower: 50
+    counterAttackPower: 0
   },
   init: function() {
-    this.obi.healthPoints = 120;
-    this.obi.attackPower = 6;
-    this.obi.baseAttackPower = 6;
+    this.luke.healthPoints = 100;
+    this.luke.attackPower = 12;
+    this.luke.baseAttackPower = 12;
+    this.luke.force = 0;
+    this.luke.counterAttackPower = 15;
+
+    this.obi.healthPoints = 110;
+    this.obi.attackPower = 12;
+    this.obi.baseAttackPower = 12;
     this.obi.force = 0;
     this.obi.counterAttackPower = 12;
 
-    this.luke.healthPoints = 100;
-    this.luke.attackPower = 4;
-    this.luke.baseAttackPower = 4;
-    this.luke.force = 0;
-    this.luke.counterAttackPower = 10;
-
-    this.sidious.healthPoints = 150;
-    this.sidious.attackPower = 8;
-    this.sidious.baseAttackPower = 8;
+    this.sidious.healthPoints = 140;
+    this.sidious.attackPower = 12;
+    this.sidious.baseAttackPower = 12;
     this.sidious.force = 0;
-    this.sidious.counterAttackPower = 8;
+    this.sidious.counterAttackPower = 10;
 
-    this.maul.healthPoints = 180;
-    this.maul.attackPower = 1;
-    this.maul.baseAttackPower = 1;
+    this.maul.healthPoints = 160;
+    this.maul.attackPower = 8;
+    this.maul.baseAttackPower = 8;
     this.maul.force = 0;
-    this.maul.counterAttackPower = 50;
+    this.maul.counterAttackPower = 18;
   }
 };
 
@@ -278,7 +290,7 @@ module.exports = charecters;
 const game = __webpack_require__(0);
 const prettyJSON = __webpack_require__(5);
 module.exports = {
-  introDiv: $("#introDiv"),
+  introDiv: $("#intro"),
   gameDiv: $("#game"),
   debugDiv: $("#debug"),
   messageDiv: $("#message"),
@@ -294,13 +306,17 @@ module.exports = {
   sidiousDiv: $("#sidious"),
   maulDiv: $("#maul"),
   attackBtn: $("#attack"),
+  intro: false,
   snd:{
     theme: new Audio("./assets/sounds/swtheme.mp3"),
     saber: new Audio("./assets/sounds/saber.mp3"),    
     luke: new Audio("./assets/sounds/luke.mp3"),
     obi: new Audio("./assets/sounds/obi.mp3"),
     sidious: new Audio("./assets/sounds/sidious.mp3"),
-    maul: new Audio("./assets/sounds/maul.mp3")    
+    maul: new Audio("./assets/sounds/maul.mp3"),
+    stop: function(snd){
+      snd.pause();
+    }    
 
   },
   ctrl:{
@@ -327,10 +343,10 @@ module.exports = {
   },
   show: function(el){
     // $(el).attr('style', 'display: visible;')
-    $(el).slideDown();
+    $(el).show();
   },
   hide: function(el){
-    $(el).slideUp();
+    $(el).hide();
   },
   msg: function(msg) {
     this.messageDiv.html(msg);
@@ -341,17 +357,17 @@ module.exports = {
   removeDefender: function() {
     $('#defender .charecter').detach();
   },
-  playSwTheme: function() {
-    // this.snd.theme.load();
-    // this.snd.theme.play();
-  },
+
   play: function(sound){
       this.dbg(sound);
       sound.load();
       sound.play();
   },
   start: function(){
-      this.play(this.snd.theme);
+      game.init();
+      if(!this.intro){
+        this.play(this.snd.theme)
+      };
       this.charectersDiv.empty();
       this.playerDiv.empty();
       this.defenderDiv.empty();
@@ -369,12 +385,13 @@ module.exports = {
         el.addClass('charecter');
         el.attr('data-health-points', charecter.healthPoints);
         el.attr('data-attack-power', charecter.attackPower);
+        el.attr('data-counter-attack', charecter.counterAttackPower);
         this.charectersDiv.append(el);
       });
     
     this.charectersDivs= $(".charecter"),
     this.msg("Please Select a Charector");
-    this.dbg(prettyJSON(game));
+    if(game.debug){this.dbg(prettyJSON(game))};
     this.updateDebugDiv();
     this.hide(this.controlsDiv);
     this.hide(this.ctrl.restart);

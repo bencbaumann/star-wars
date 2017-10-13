@@ -1,7 +1,9 @@
-var charecters = require("../model/charecters.js");
+var charecters = require("../controllers/charecters.js");
 module.exports = {
+  debug: false,
   playerSelected: false,
   defenderSelected: false,
+  defenders: 3,
   charecters: charecters,
   player: {},
   defender: {},
@@ -35,6 +37,7 @@ module.exports = {
       charecters.init();     
       this.player = {};
       this.defender = {};
+      this.defenders=3;
       this.playerSelected = false;
       this.defenderSelected = false;
   }
