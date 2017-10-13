@@ -2,6 +2,7 @@ var charecters = require("../model/charecters.js");
 module.exports = {
   playerSelected: false,
   defenderSelected: false,
+  charecters: charecters,
   player: {},
   defender: {},
   name: "Ben",
@@ -20,6 +21,8 @@ module.exports = {
   },
   isDefenderDead: function() {
     if (this.defender.healthPoints <= 0) {
+      this.defender = {};
+      this.defenderSelected = false;
       return true;
     }
   },
@@ -27,5 +30,12 @@ module.exports = {
     if (this.player.healthPoints <= 0) {
       return true;
     }
+  },
+  init:function(){
+      charecters.init();     
+      this.player = {};
+      this.defender = {};
+      this.playerSelected = false;
+      this.defenderSelected = false;
   }
 };

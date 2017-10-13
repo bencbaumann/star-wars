@@ -60,17 +60,18 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 1);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var charecters = __webpack_require__(1);
+var charecters = __webpack_require__(3);
 module.exports = {
   playerSelected: false,
   defenderSelected: false,
+  charecters: charecters,
   player: {},
   defender: {},
   name: "Ben",
@@ -89,6 +90,8 @@ module.exports = {
   },
   isDefenderDead: function() {
     if (this.defender.healthPoints <= 0) {
+      this.defender = {};
+      this.defenderSelected = false;
       return true;
     }
   },
@@ -96,146 +99,192 @@ module.exports = {
     if (this.player.healthPoints <= 0) {
       return true;
     }
+  },
+  init:function(){
+      charecters.init();     
+      this.player = {};
+      this.defender = {};
+      this.playerSelected = false;
+      this.defenderSelected = false;
   }
 };
 
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports) {
-
-var obi = {
-  id: "obi",
-  name: "Obi-Wan Kanobi",
-  healthPoints: 120,
-  attackPower: 6,
-  baseAttackPower: 6,
-  force: 0,
-  counterAttackPower: 12
-};
-var luke = {
-  id: "luke",
-  name: "Luke Skywalker",
-  healthPoints: 100,
-  attackPower: 4,
-  baseAttackPower: 4,
-  force: 0,
-  counterAttackPower: 10
-};
-var sidious = {
-  id: "sidious",
-  name: "Darth Sidious",
-  healthPoints: 150,
-  attackPower: 8,
-  baseAttackPower: 8,
-  force: 0,
-  counterAttackPower: 8
-};
-var maul = {
-  id: "maul",
-  name: "Darth Maul",
-  healthPoints: 180,
-  attackPower: 1,
-  baseAttackPower: 1,
-  force: 0,
-  counterAttackPower: 50
-};
-module.exports.obi = obi;
-module.exports.luke = luke;
-module.exports.sidious = sidious;
-module.exports.maul = maul;
-
-/***/ }),
-/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(3);
-var add = __webpack_require__(4);
-var game = __webpack_require__(0);
-var ui = __webpack_require__(5);
-
-ui.start();
+__webpack_require__(2);
+const game = __webpack_require__(0);
+const ui = __webpack_require__(4);
 
 
-$(document).ready(function(){
-    
-    ui.charectersDivs.on('click', selectPlayers);
 
-    function selectPlayers() {
-        if(!game.playerSelected){
-            ui.selectPlayer($(this));
-            $(this).off( "click");
-            console.log($(this));
-            let playerId = $(this).attr('id');
-            game.selectPlayer(playerId);
-            ui.msg("Please Select a Defender");
-            ui.dbg(game);
-        }
-        else if(!game.defenderSelected){
-            ui.selectDefender($(this));
-            let defenderId = $(this).attr('id');
-            game.selectDefender(defenderId);
-            ui.msg("Fight!");
-            ui.dbg(game);
-            ui.show(ui.controlsDiv);
-            ui.hide(ui.charectersDiv);
-        }
+$(document).ready(function() {
+
+    ui.gameDiv.hide();
+    ui.gameDiv.delay(34000).fadeIn();
+    ui.start();
+
+    $(document).on('keyup', closeIntro);
+    function closeIntro() {
+        console.log('keyup baby');
+        ui.gameDiv.show();
+        ui.introDiv.hide();
+        ui.snd.theme.stop();
+
     }
     
-    ui.ctrl.attack.on('click', function(){
-        ui.play(ui.snd.saber);
-        game.fight();
-        ui.dbg(game);
-        if(game.isDefenderDead()){
-            game.defender = {};
-            game.player.force += 10;
-            game.defenderSelected=false;
-            ui.removeDefender();
-            ui.msg("You won, select a new defender!");
-            ui.hide(ui.controlsDiv);
-            ui.show(ui.charectersDiv);
-        }
-        else if(game.isPlayerDead()){
-            ui.msg("You are dead!");
-            ui.ctrl.restart.show();
-            ui.ctrl.attack.hide();
-        }
-    });
-
-    ui.ctrl.restart.on('click', function(){
-        ui.start();
-        $(".charecter").on('click', selectPlayers)
-    });
     
+
+    const selectPlayers = function () {
+        ui.dbg(game);
+        if (!game.playerSelected) {
+          ui.selectPlayer($(this));
+          let playerId = $(this).attr("id");
+          game.selectPlayer(playerId);
+          ui.msg("Please Select a Defender");
+          ui.dbg(game);
+          $(this).off("click");
+        } else if (!game.defenderSelected) {
+          ui.selectDefender($(this));
+          let defenderId = $(this).attr("id");
+          game.selectDefender(defenderId);
+          ui.msg("Fight!");
+          ui.dbg(game);
+          ui.show(ui.controlsDiv);
+          ui.hide(ui.charectersDiv);
+        }
+      }
+
+ui.charectersDivs.on("click", selectPlayers);
+
+
+  ui.ctrl.attack.on("click", function() {
+    ui.play(ui.snd.saber);
+    game.fight();
+    ui.dbg(game);
+    ui.player = $('#player div');
+    ui.defender = $('#defender div');
+    ui.player.attr('data-health-points', game.player.healthPoints);
+    ui.player.attr('data-attack-power', game.player.attackPower);
+    ui.defender.attr('data-health-points', game.defender.healthPoints);
+    ui.defender.attr('data-attack-power', game.defender.attackPower);
+    if (game.isDefenderDead()) {
+    //   game.player.force += 10;
+      ui.removeDefender();
+      ui.msg("You won, select a new defender!");
+      ui.hide(ui.controlsDiv);
+      ui.show(ui.charectersDiv);
+    } else if (game.isPlayerDead()) {
+      ui.msg("You are dead!");
+      ui.ctrl.restart.show();
+      ui.ctrl.attack.hide();
+    }
+  });
+
+  ui.ctrl.restart.on("click", function() {
+    game.init();
+    ui.start();
+    ui.ctrl.attack.show();
+    $('#charecters').on('click', '.charecter', selectPlayers);    
+  });
 });
 
 
+
+
 /***/ }),
-/* 3 */
+/* 2 */
 /***/ (function(module, exports) {
 
 // removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 4 */
+/* 3 */
 /***/ (function(module, exports) {
 
-module.exports = function() {
-    return 10;
+var charecters = {
+  obi: {
+    id: "obi",
+    name: "Obi-Wan Kanobi",
+    healthPoints: 120,
+    attackPower: 6,
+    baseAttackPower: 6,
+    force: 0,
+    counterAttackPower: 12
+  },
+  luke: {
+    id: "luke",
+    name: "Luke Skywalker",
+    healthPoints: 100,
+    attackPower: 4,
+    baseAttackPower: 4,
+    force: 0,
+    counterAttackPower: 10
+  },
+  sidious: {
+    id: "sidious",
+    name: "Darth Sidious",
+    healthPoints: 150,
+    attackPower: 8,
+    baseAttackPower: 8,
+    force: 0,
+    counterAttackPower: 8
+  },
+  maul: {
+    id: "maul",
+    name: "Darth Maul",
+    healthPoints: 180,
+    attackPower: 1,
+    baseAttackPower: 1,
+    force: 0,
+    counterAttackPower: 50
+  },
+  init: function() {
+    this.obi.healthPoints = 120;
+    this.obi.attackPower = 6;
+    this.obi.baseAttackPower = 6;
+    this.obi.force = 0;
+    this.obi.counterAttackPower = 12;
+
+    this.luke.healthPoints = 100;
+    this.luke.attackPower = 4;
+    this.luke.baseAttackPower = 4;
+    this.luke.force = 0;
+    this.luke.counterAttackPower = 10;
+
+    this.sidious.healthPoints = 150;
+    this.sidious.attackPower = 8;
+    this.sidious.baseAttackPower = 8;
+    this.sidious.force = 0;
+    this.sidious.counterAttackPower = 8;
+
+    this.maul.healthPoints = 180;
+    this.maul.attackPower = 1;
+    this.maul.baseAttackPower = 1;
+    this.maul.force = 0;
+    this.maul.counterAttackPower = 50;
+  }
 };
 
+module.exports = charecters;
+
+
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const game = __webpack_require__(0);
-var charecters = __webpack_require__(1);
-const prettyJSON = __webpack_require__(6);
+const prettyJSON = __webpack_require__(5);
 module.exports = {
+  introDiv: $("#introDiv"),
+  gameDiv: $("#game"),
   debugDiv: $("#debug"),
   messageDiv: $("#message"),
   controlsDiv: $("#controls"),
   playerDiv: $("#player"),
+  defender: "",
   defender: "",
   defenderDiv: $("#defender"), // container for the defender
   charectersDivs: $(".charecter"), // select all of the class nodes
@@ -265,6 +314,7 @@ module.exports = {
     //   alert("Booger Snot");
   },
   selectPlayer: function(charecter) {
+    this.player = charecter;
     this.playerDiv.append(charecter);
     this.snd[charecter[0].id].load();
     this.snd[charecter[0].id].play();
@@ -301,19 +351,16 @@ module.exports = {
       sound.play();
   },
   start: function(){
-      
+      this.play(this.snd.theme);
       this.charectersDiv.empty();
       this.playerDiv.empty();
       this.defenderDiv.empty();
-      game.player = {};
-      game.defender = {};
-      console.log(charecters);
-      var charecterFactory = Object.create(charecters);
+      console.log(game.charecters);
       var arr = [];
-      arr.push(charecterFactory.luke);
-      arr.push(charecterFactory.obi);
-      arr.push(charecterFactory.sidious);
-      arr.push(charecterFactory.maul);
+      arr.push(game.charecters.luke);
+      arr.push(game.charecters.obi);
+      arr.push(game.charecters.sidious);
+      arr.push(game.charecters.maul);
 
       // Used arrow function to pass this scope
       arr.forEach((charecter)=>{
@@ -327,7 +374,7 @@ module.exports = {
     
     this.charectersDivs= $(".charecter"),
     this.msg("Please Select a Charector");
-    this.dbg(prettyJSON(arr));
+    this.dbg(prettyJSON(game));
     this.updateDebugDiv();
     this.hide(this.controlsDiv);
     this.hide(this.ctrl.restart);
@@ -339,7 +386,7 @@ module.exports = {
     
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports) {
 
 module.exports = json => `<pre>${JSON.stringify(json, null, 2)}</pre>`;

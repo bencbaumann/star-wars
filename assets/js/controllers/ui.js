@@ -1,11 +1,13 @@
 const game = require("./game.js");
-var charecters = require("../model/charecters.js");
 const prettyJSON = require("../lib/prettyJSON.js");
 module.exports = {
+  introDiv: $("#introDiv"),
+  gameDiv: $("#game"),
   debugDiv: $("#debug"),
   messageDiv: $("#message"),
   controlsDiv: $("#controls"),
   playerDiv: $("#player"),
+  defender: "",
   defender: "",
   defenderDiv: $("#defender"), // container for the defender
   charectersDivs: $(".charecter"), // select all of the class nodes
@@ -35,6 +37,7 @@ module.exports = {
     //   alert("Booger Snot");
   },
   selectPlayer: function(charecter) {
+    this.player = charecter;
     this.playerDiv.append(charecter);
     this.snd[charecter[0].id].load();
     this.snd[charecter[0].id].play();
@@ -71,19 +74,16 @@ module.exports = {
       sound.play();
   },
   start: function(){
-      
+      this.play(this.snd.theme);
       this.charectersDiv.empty();
       this.playerDiv.empty();
       this.defenderDiv.empty();
-      game.player = {};
-      game.defender = {};
-      console.log(charecters);
-      var charecterFactory = Object.create(charecters);
+      console.log(game.charecters);
       var arr = [];
-      arr.push(charecterFactory.luke);
-      arr.push(charecterFactory.obi);
-      arr.push(charecterFactory.sidious);
-      arr.push(charecterFactory.maul);
+      arr.push(game.charecters.luke);
+      arr.push(game.charecters.obi);
+      arr.push(game.charecters.sidious);
+      arr.push(game.charecters.maul);
 
       // Used arrow function to pass this scope
       arr.forEach((charecter)=>{
@@ -97,7 +97,7 @@ module.exports = {
     
     this.charectersDivs= $(".charecter"),
     this.msg("Please Select a Charector");
-    this.dbg(prettyJSON(arr));
+    this.dbg(prettyJSON(game));
     this.updateDebugDiv();
     this.hide(this.controlsDiv);
     this.hide(this.ctrl.restart);
